@@ -1,0 +1,14 @@
+{
+    "C_Cpp.default.compilerPath": "C:\\msys64\\ucrt64\\bin\\g++.exe",
+    "files.associations": {
+        "bitset": "cpp",
+        "unordered_set": "cpp",
+        "string": "cpp",
+        "array": "cpp",
+        "string_view": "cpp",
+        "initializer_list": "cpp",
+        "regex": "cpp",
+        "valarray": "cpp",
+        "numbers": "cpp"
+    }
+}
