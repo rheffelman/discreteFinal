@@ -49,29 +49,20 @@ int main(){
         for (int ii = 0; ii < shuffles; ii++) swap(deck[rand()%deck.size()], deck[rand()%deck.size()]); // this loop randomly shuffles the deck
         for (int ii = 0; ii < 5; ii++) hand += deck[ii]; // this loop draws five cards from the deck to the hand
         assert(hand.size() == 10);
-
+        
+        string noSuits = hand.substr(0, 1) + hand.substr(2, 1) + hand.substr(4, 1) + hand.substr(6, 1) + hand.substr(8, 1);
+        string noVals = hand.substr(1, 1) + hand.substr(3, 1) + hand.substr(5, 1) + hand.substr(7, 1) + hand.substr(9, 1);
         bitset<11> bs;
-        // if (fiveOfAKind(hand)) bs[0] = true;
-        // else if (royalFlush(hand)) bs[1] = true;
-        // else if (straightFlush(hand)) bs[2] = true;
-        // else if (fourOfAKind(hand)) bs[3] = true;
-        // else if (fullHouse(hand)) bs[4] = true;
-        // else if (flush(hand)) bs[5] = true;
-        // else if (straight(hand)) bs[6] = true;
-        // else if (twoPair(hand)) bs[7] = true;
-        // else if (threeOfAKind(hand)) bs[8] = true;
-        // else if (!onePair(hand)) bs[9] = true;
-        // else bs[10] = true;
-        bs[0] = straight(hand);
-        bs[1] = flush(hand);
-        bs[2] = royalFlush(hand);
-        bs[3] = fullHouse(hand);
-        bs[4] = straightFlush(hand);
-        bs[5] = onePair(hand);
-        bs[6] = twoPair(hand);
-        bs[7] = threeOfAKind(hand);
-        bs[8] = fourOfAKind(hand);
-        bs[9] = fiveOfAKind(hand);
+        bs[0] = straight(noSuits);
+        bs[1] = flush(noVals);
+        bs[2] = (bs[1] and royalFlush(hand));
+        bs[3] = fullHouse(noSuits);
+        bs[4] = (bs[0] and bs[1]);
+        bs[5] = onePair(noSuits);
+        bs[6] = twoPair(noSuits);
+        bs[7] = threeOfAKind(noSuits);
+        bs[8] = fourOfAKind(noSuits);
+        bs[9] = fiveOfAKind(noSuits);
         if (!bs.count()) bs[10] = true;
         for (int i = 0; i < 11; i++) if(bs[i]) tallies[i]++;
     }
@@ -83,77 +74,71 @@ int main(){
 }
 //--
 bool onePair(string &hand){
-    string s = stripSuits(hand);
     unordered_set<char> ht;
-    for (int i = 0; i < s.size(); i++){
-        if (ht.count(s[i]) or s[i] == 'w') return true;
-        ht.insert(s[i]);
+    for (int i = 0; i < hand.size(); i++){
+        if (ht.count(hand[i]) or hand[i] == 'w') return true;
+        ht.insert(hand[i]);
     }
     return false;
 }
 //--
 bool twoPair(string &hand){
-    string s = stripSuits(hand);
     unordered_set<char> ht;
 
-    for (int i = 0; i < s.size(); i++){
-        if (ht.count(s[i])){
-            for (int ii = i++; ii < s.size(); ii++){
-                if (ht.count(s[ii] and s[ii] != s[i]) or s[ii] == 'w' or ht.count('w')) return true;
-                ht.insert(s[ii]);
+    for (int i = 0; i < hand.size(); i++){
+        if (ht.count(hand[i])){
+            for (int ii = i++; ii < hand.size(); ii++){
+                if (ht.count(hand[ii] and hand[ii] != hand[i]) or hand[ii] == 'w' or ht.count('w')) return true;
+                ht.insert(hand[ii]);
             }
             return false;
         }
-        ht.insert(s[i]);
+        ht.insert(hand[i]);
     }
     return false;
 }
 //--
 bool threeOfAKind(string& hand){
-    string s = stripSuits(hand);
     unordered_set<char> ht;
     valarray<unsigned int> v;
     v.resize(13, 0);
 
-    for (int i = 0; i < s.size(); i++){
-        ht.insert(s[i]);
-        if (s[i] == 'a') v[0]++;
-        else if (s[i] == 'j') v[11]++;
-        else if (s[i] == 'q') v[12]++;
-        else if (s[i] == 'k') v[13]++;
-        else v[((int)s[i])-47]++;
+    for (int i = 0; i < hand.size(); i++){
+        ht.insert(hand[i]);
+        if (hand[i] == 'a') v[0]++;
+        else if (hand[i] == 'j') v[11]++;
+        else if (hand[i] == 'q') v[12]++;
+        else if (hand[i] == 'k') v[13]++;
+        else v[((int)hand[i])-47]++;
     }
     return (v.max() == 3 or (v.max() == 2 and ht.count('w')));
 }
 //--
 bool fourOfAKind(string& hand){
-    string s = stripSuits(hand);
     unordered_set<char> ht;
     valarray<unsigned int> v;
     v.resize(13, 0);
 
-    for (int i = 0; i < s.size(); i++){
-        ht.insert(s[i]);
-        if (s[i] == 'a') v[0]++;
-        else if (s[i] == 'j') v[11]++;
-        else if (s[i] == 'q') v[12]++;
-        else if (s[i] == 'k') v[13]++;
-        else v[((int)s[i])-47]++;
+    for (int i = 0; i < hand.size(); i++){
+        ht.insert(hand[i]);
+        if (hand[i] == 'a') v[0]++;
+        else if (hand[i] == 'j') v[11]++;
+        else if (hand[i] == 'q') v[12]++;
+        else if (hand[i] == 'k') v[13]++;
+        else v[((int)hand[i])-47]++;
     }
     return (v.max() == 4 or (v.max() == 3 and ht.count('w')));
 }
 //--
 bool fiveOfAKind(string& hand){
-    string s = stripSuits(hand);
     unordered_set<char> ht;
-    for (int i = 0; i < s.size(); i++) ht.insert(s[i]);
+    for (int i = 0; i < hand.size(); i++) ht.insert(hand[i]);
     return (ht.size() == 2 and ht.count('w'));
 }
 //--
 bool straight(string &hand){
-    string s = stripSuits(hand);
     unordered_set<char> ht;
-    for (int i = 0; i < s.size(); i++) ht.insert(s[i]);
+    for (int i = 0; i < hand.size(); i++) ht.insert(hand[i]);
     vector <string> cases {"a0123", "01234", "12345", "23456", "34567", "45678", "56789", "6789j", "789jq", "89jqk"};
     bool hasW = ht.count('w');
 
@@ -168,9 +153,8 @@ bool straight(string &hand){
 }
 //--
 bool flush(string &hand){
-    string s = stripVals(hand);
     unordered_set<char> ht;
-    for (int i = 0; i < s.size(); i++) ht.insert(s[i]);
+    for (int i = 0; i < hand.size(); i++) ht.insert(hand[i]);
     return(ht.size() == 1 or (ht.size() == 2 and ht.count('w')));
 }
 //--
@@ -179,33 +163,28 @@ bool straightFlush(string& hand){
 }
 //--
 bool royalFlush(string &hand){
-    if (flush(hand)){
-        string s = stripSuits(hand);
-        unordered_set<char> ht;
-        for (int i = 0; i < s.size(); i++) ht.insert(s[i]);
-        string rf = "a9kqj";
-        unsigned int counter = 0;
-        for (int i = 0; i < 5; i++) if (ht.count(rf[i])) counter++;
-        return (counter == 5 or (counter == 4 and ht.count('w')));
-    }
-    return false;
+    unordered_set<char> ht;
+    for (int i = 0; i < hand.size(); i++) ht.insert(hand[i]);
+    string rf = "a9kqj";
+    unsigned int counter = 0;
+    for (int i = 0; i < 5; i++) if (ht.count(rf[i])) counter++;
+    return (counter == 5 or (counter == 4 and ht.count('w')));
 }
 //--
 bool fullHouse(string& hand){
-    string s = stripSuits(hand);
     valarray<unsigned int> v;
     v.resize(13, 0);
     unordered_set<char> ht;
-    for (int i = 0; i < s.size(); i++) ht.insert(s[i]);
+    for (int i = 0; i < hand.size(); i++) ht.insert(hand[i]);
 
     if (ht.count('w')){
-        for (int i = 0; i < s.size(); i++){
-            if (s[i] == 'a') v[0]++;
-            else if (s[i] == 'j') v[11]++;
-            else if (s[i] == 'q') v[12]++;
-            else if (s[i] == 'k') v[13]++;
-            else if (s[i] == 'w') continue;
-            else v[((int)s[i])-47]++;
+        for (int i = 0; i < hand.size(); i++){
+            if (hand[i] == 'a') v[0]++;
+            else if (hand[i] == 'j') v[11]++;
+            else if (hand[i] == 'q') v[12]++;
+            else if (hand[i] == 'k') v[13]++;
+            else if (hand[i] == 'w') continue;
+            else v[((int)hand[i])-47]++;
         }
         if (v.max() == 3) return true;
         for (int i = 0; i < v.size(); i++){
@@ -218,13 +197,13 @@ bool fullHouse(string& hand){
         return false;
     }
 
-    for (int i = 0; i < s.size(); i++){
-        if (s[i] == 'a') v[0]++;
-        else if (s[i] == 'j') v[11]++;
-        else if (s[i] == 'q') v[12]++;
-        else if (s[i] == 'k') v[13]++;
-        else if (s[i] == 'w') continue;
-        else v[((int)s[i])-47]++;
+    for (int i = 0; i < hand.size(); i++){
+        if (hand[i] == 'a') v[0]++;
+        else if (hand[i] == 'j') v[11]++;
+        else if (hand[i] == 'q') v[12]++;
+        else if (hand[i] == 'k') v[13]++;
+        else if (hand[i] == 'w') continue;
+        else v[((int)hand[i])-47]++;
     }
 
     for (int i = 0; i < v.size(); i++){

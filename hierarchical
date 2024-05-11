@@ -51,27 +51,17 @@ int main(){
         assert(hand.size() == 10);
 
         bitset<11> bs;
-        // if (fiveOfAKind(hand)) bs[0] = true;
-        // else if (royalFlush(hand)) bs[1] = true;
-        // else if (straightFlush(hand)) bs[2] = true;
-        // else if (fourOfAKind(hand)) bs[3] = true;
-        // else if (fullHouse(hand)) bs[4] = true;
-        // else if (flush(hand)) bs[5] = true;
-        // else if (straight(hand)) bs[6] = true;
-        // else if (twoPair(hand)) bs[7] = true;
-        // else if (threeOfAKind(hand)) bs[8] = true;
-        // else if (!onePair(hand)) bs[9] = true;
-        // else bs[10] = true;
-        bs[0] = straight(hand);
-        bs[1] = flush(hand);
-        bs[2] = royalFlush(hand);
-        bs[3] = fullHouse(hand);
-        bs[4] = straightFlush(hand);
-        bs[5] = onePair(hand);
-        bs[6] = twoPair(hand);
-        bs[7] = threeOfAKind(hand);
-        bs[8] = fourOfAKind(hand);
-        bs[9] = fiveOfAKind(hand);
+        if (fiveOfAKind(hand)) bs[0] = true;
+        else if (royalFlush(hand)) bs[1] = true;
+        else if (straightFlush(hand)) bs[2] = true;
+        else if (fourOfAKind(hand)) bs[3] = true;
+        else if (fullHouse(hand)) bs[4] = true;
+        else if (flush(hand)) bs[5] = true;
+        else if (straight(hand)) bs[6] = true;
+        else if (twoPair(hand)) bs[7] = true;
+        else if (threeOfAKind(hand)) bs[8] = true;
+        else if (!onePair(hand)) bs[9] = true;
+        else bs[10] = true;
         if (!bs.count()) bs[10] = true;
         for (int i = 0; i < 11; i++) if(bs[i]) tallies[i]++;
     }
