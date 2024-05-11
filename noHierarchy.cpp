@@ -25,7 +25,7 @@ string stripVals(string& hand);
 
 int main(){
 
-    const long unsigned int iterations = 1000000;
+    const long unsigned int iterations = 1000000000;
     const unsigned int shuffles = 53;
     srand(time(0));
 
@@ -61,7 +61,7 @@ int main(){
         bs[7] = threeOfAKind(hand);
         bs[8] = twoPair(hand);
         bs[9] = onePair(hand);
-        if (!bs.count()) bs[10] = true;
+        if (!bs.count()) bs[10] = 1;
         for (int ii = 0; ii < 11; ii++) if(bs[ii]) tallies[ii]++;
     }
     printf("no hierarchy:\n");
@@ -130,10 +130,6 @@ bool threeOfAKind(string& hand){
         else if (s[i] == 'k') v[13]++;
         else v[((int)s[i])-47]++;
     }
-    // if (!(v.max() == 3 or (v.max() == 2 and ht.count('w')))){
-    //     for (int i = 0; i < v.size(); i++) printf("%d  ", v[i]);
-    //     printf("\n%s\n", s.c_str());
-    // }
     return (v.max() == 3 or (v.max() == 2 and ht.count('w')));
 }
 //--
@@ -151,10 +147,6 @@ bool fourOfAKind(string& hand){
         else if (s[i] == 'k') v[13]++;
         else v[((int)s[i])-47]++;
     }
-    // if (!(v.max() == 4 or (v.max() == 3 and ht.count('w')))){
-    //     for (int i = 0; i < v.size(); i++) printf("%d  ", v[i]);
-    //     printf("\n%s\n", s.c_str());
-    // }
     return (v.max() == 4 or (v.max() == 3 and ht.count('w')));
 }
 //--

@@ -25,7 +25,7 @@ string stripVals(string& hand);
 
 int main(){
 
-    const long unsigned int iterations = 1000000;
+    const long unsigned int iterations = 1000000000;
     const unsigned int shuffles = 53;
     srand(time(0));
 
@@ -50,21 +50,22 @@ int main(){
         for (int ii = 0; ii < 5; ii++) hand += deck[ii]; // this loop draws five cards from the deck to the hand
         assert(hand.size() == 10);
         bitset<11> bs;
-
-        bs[0] = fiveOfAKind(hand);
-        bs[1] = royalFlush(hand);
-        bs[2] = straightFlush(hand);
-        bs[3] = fourOfAKind(hand);
-        bs[4] = fullHouse(hand);
-        bs[5] = flush(hand);
-        bs[6] = straight(hand);
-        bs[7] = threeOfAKind(hand);
-        bs[8] = twoPair(hand);
-        bs[9] = onePair(hand);
-        if (!bs.count()) bs[10] = true;
+        if (fiveOfAKind(hand)) bs[0] = 1;
+        else if (royalFlush(hand)) bs[1] = 1;
+        else if (straightFlush(hand)) bs[2] = 1;
+        else if (fourOfAKind(hand)) bs[3] = 1;
+        else if (fullHouse(hand)) bs[4] = 1;
+        else if (flush(hand)) bs[5] = 1;
+        else if (straight(hand)) bs[6] = 1;
+        else if (twoPair(hand)) bs[7] = 1;
+        else if (threeOfAKind(hand)) bs[8] = 1;
+        else if (onePair(hand)) bs[9] = 1;
+        else bs[10] = 1;
+        assert(bs.count() == 1);
         for (int ii = 0; ii < 11; ii++) if(bs[ii]) tallies[ii]++;
     }
-    printf("no hierarchy:\n");
+
+    printf("standard poker hierarchy:\n");
     printf("iterations: %ld\n", iterations);
     printf("five-of-a-kinds: %d\n", tallies[0]);
     printf("royal flushes: %d\n", tallies[1]);
@@ -73,17 +74,18 @@ int main(){
     printf("full houses: %d\n", tallies[4]);
     printf("flushes: %d\n", tallies[5]);
     printf("straight: %d\n", tallies[6]);
-    printf("three-of-a-kinds: %d\n", tallies[7]);
-    printf("two pairs: %d\n", tallies[8]);
-    printf("one pairs: %d\n", tallies[9]);
+    printf("two pairs: %d\n", tallies[7]);
+    printf("three-of-a-kinds: %d\n", tallies[8]);
     printf("junk: %d\n", tallies[10]);
+    printf("one pairs: %d\n", tallies[9]);
+    
 }
 //--
 bool onePair(string &hand){
     string s = stripSuits(hand);
     unordered_set<char> ht;
     for (int i = 0; i < s.size(); i++){
-        if (ht.count(s[i]) or s[i] == 'w') return true;
+        if (ht.count(s[i])) return true;
         ht.insert(s[i]);
     }
     return false;
@@ -130,10 +132,6 @@ bool threeOfAKind(string& hand){
         else if (s[i] == 'k') v[13]++;
         else v[((int)s[i])-47]++;
     }
-    // if (!(v.max() == 3 or (v.max() == 2 and ht.count('w')))){
-    //     for (int i = 0; i < v.size(); i++) printf("%d  ", v[i]);
-    //     printf("\n%s\n", s.c_str());
-    // }
     return (v.max() == 3 or (v.max() == 2 and ht.count('w')));
 }
 //--
@@ -151,10 +149,6 @@ bool fourOfAKind(string& hand){
         else if (s[i] == 'k') v[13]++;
         else v[((int)s[i])-47]++;
     }
-    // if (!(v.max() == 4 or (v.max() == 3 and ht.count('w')))){
-    //     for (int i = 0; i < v.size(); i++) printf("%d  ", v[i]);
-    //     printf("\n%s\n", s.c_str());
-    // }
     return (v.max() == 4 or (v.max() == 3 and ht.count('w')));
 }
 //--

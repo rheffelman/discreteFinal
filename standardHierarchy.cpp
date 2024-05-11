@@ -25,7 +25,7 @@ string stripVals(string& hand);
 
 int main(){
 
-    const long unsigned int iterations = 1000000;
+    const long unsigned int iterations = 1000000000;
     const unsigned int shuffles = 53;
     srand(time(0));
 
@@ -49,27 +49,36 @@ int main(){
         for (int ii = 0; ii < shuffles; ii++) swap(deck[rand()%deck.size()], deck[rand()%deck.size()]); // this loop randomly shuffles the deck
         for (int ii = 0; ii < 5; ii++) hand += deck[ii]; // this loop draws five cards from the deck to the hand
         assert(hand.size() == 10);
-
         bitset<11> bs;
-        if (fiveOfAKind(hand)) bs[0] = true;
-        else if (royalFlush(hand)) bs[1] = true;
-        else if (straightFlush(hand)) bs[2] = true;
-        else if (fourOfAKind(hand)) bs[3] = true;
-        else if (fullHouse(hand)) bs[4] = true;
-        else if (flush(hand)) bs[5] = true;
-        else if (straight(hand)) bs[6] = true;
-        else if (twoPair(hand)) bs[7] = true;
-        else if (threeOfAKind(hand)) bs[8] = true;
-        else if (!onePair(hand)) bs[9] = true;
-        else bs[10] = true;
-        if (!bs.count()) bs[10] = true;
-        for (int i = 0; i < 11; i++) if(bs[i]) tallies[i]++;
+        if (fiveOfAKind(hand)) bs[0] = 1;
+        else if (royalFlush(hand)) bs[1] = 1;
+        else if (straightFlush(hand)) bs[2] = 1;
+        else if (fourOfAKind(hand)) bs[3] = 1;
+        else if (fullHouse(hand)) bs[4] = 1;
+        else if (flush(hand)) bs[5] = 1;
+        else if (straight(hand)) bs[6] = 1;
+        else if (threeOfAKind(hand)) bs[7] = 1;
+        else if (twoPair(hand)) bs[8] = 1;
+        else if (onePair(hand)) bs[9] = 1;
+        else bs[10] = 1;
+        assert(bs.count() == 1);
+        for (int ii = 0; ii < 11; ii++) if(bs[ii]) tallies[ii]++;
     }
-    printf("no hierarchy:\n");
+
+    printf("standard poker hierarchy:\n");
     printf("iterations: %ld\n", iterations);
-    for (int i = 0; i < tallies.size(); i++){
-        printf("%d\n", tallies[i]);
-    }
+    printf("five-of-a-kinds: %d\n", tallies[0]);
+    printf("royal flushes: %d\n", tallies[1]);
+    printf("straight flushes: %d\n", tallies[2]);
+    printf("four-of-a-kinds: %d\n", tallies[3]);
+    printf("full houses: %d\n", tallies[4]);
+    printf("flushes: %d\n", tallies[5]);
+    printf("straight: %d\n", tallies[6]);
+    printf("three-of-a-kinds: %d\n", tallies[7]);
+    printf("two pairs: %d\n", tallies[8]);
+    printf("one pairs: %d\n", tallies[9]);
+    printf("junk: %d\n", tallies[10]);
+
 }
 //--
 bool onePair(string &hand){
@@ -85,16 +94,26 @@ bool onePair(string &hand){
 bool twoPair(string &hand){
     string s = stripSuits(hand);
     unordered_set<char> ht;
+    valarray<unsigned int> v;
+    v.resize(14, 0);
 
     for (int i = 0; i < s.size(); i++){
-        if (ht.count(s[i])){
-            for (int ii = i++; ii < s.size(); ii++){
-                if (ht.count(s[ii] and s[ii] != s[i]) or s[ii] == 'w' or ht.count('w')) return true;
-                ht.insert(s[ii]);
-            }
-            return false;
-        }
         ht.insert(s[i]);
+        if (s[i] == 'a') v[0]++;
+        else if (s[i] == 'j') v[11]++;
+        else if (s[i] == 'q') v[12]++;
+        else if (s[i] == 'k') v[13]++;
+        else v[((int)s[i])-47]++;
+    }
+    if (v.max() >= 4 or (v.max() >= 2 and ht.count('w'))) return true;
+    else{
+        bool onePair = false;
+        for (int i = 0; i < v.size(); i++){
+            if (v[i] == 2 or v[i] == 3){
+                if (onePair)return true;
+                else onePair = true;
+            }
+        }
     }
     return false;
 }
@@ -103,7 +122,7 @@ bool threeOfAKind(string& hand){
     string s = stripSuits(hand);
     unordered_set<char> ht;
     valarray<unsigned int> v;
-    v.resize(13, 0);
+    v.resize(14, 0);
 
     for (int i = 0; i < s.size(); i++){
         ht.insert(s[i]);
@@ -113,6 +132,10 @@ bool threeOfAKind(string& hand){
         else if (s[i] == 'k') v[13]++;
         else v[((int)s[i])-47]++;
     }
+    // if (!(v.max() == 3 or (v.max() == 2 and ht.count('w')))){
+    //     for (int i = 0; i < v.size(); i++) printf("%d  ", v[i]);
+    //     printf("\n%s\n", s.c_str());
+    // }
     return (v.max() == 3 or (v.max() == 2 and ht.count('w')));
 }
 //--
@@ -120,7 +143,7 @@ bool fourOfAKind(string& hand){
     string s = stripSuits(hand);
     unordered_set<char> ht;
     valarray<unsigned int> v;
-    v.resize(13, 0);
+    v.resize(14, 0);
 
     for (int i = 0; i < s.size(); i++){
         ht.insert(s[i]);
@@ -130,6 +153,10 @@ bool fourOfAKind(string& hand){
         else if (s[i] == 'k') v[13]++;
         else v[((int)s[i])-47]++;
     }
+    // if (!(v.max() == 4 or (v.max() == 3 and ht.count('w')))){
+    //     for (int i = 0; i < v.size(); i++) printf("%d  ", v[i]);
+    //     printf("\n%s\n", s.c_str());
+    // }
     return (v.max() == 4 or (v.max() == 3 and ht.count('w')));
 }
 //--
@@ -144,16 +171,17 @@ bool straight(string &hand){
     string s = stripSuits(hand);
     unordered_set<char> ht;
     for (int i = 0; i < s.size(); i++) ht.insert(s[i]);
-    vector <string> cases {"a0123", "01234", "12345", "23456", "34567", "45678", "56789", "6789j", "789jq", "89jqk"};
+    vector <string> cases {"a0123", "01234", "12345", "23456", "34567", "45678", "56789", "6789j", "789jq", "89jqk", "9jqka"};
     bool hasW = ht.count('w');
 
     for (int i = 0; i < cases.size(); i++){
         bitset<5> bs;
         for (int ii = 0; ii < cases[i].size(); ii++){
-            if (ht.count(cases[i][ii])) bs[ii] = true;
+            if (ht.count(cases[i][ii])) bs[ii] = 1;
         }
         if ((bs.count() == 5) or ((bs.count() == 4) and (hasW))) return true;
     }
+    
     return false;
 }
 //--
@@ -184,7 +212,7 @@ bool royalFlush(string &hand){
 bool fullHouse(string& hand){
     string s = stripSuits(hand);
     valarray<unsigned int> v;
-    v.resize(13, 0);
+    v.resize(14, 0);
     unordered_set<char> ht;
     for (int i = 0; i < s.size(); i++) ht.insert(s[i]);
 
