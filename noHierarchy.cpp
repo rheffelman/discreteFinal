@@ -25,7 +25,7 @@ string stripVals(string& hand);
 
 int main(){
 
-    const long unsigned int iterations = 1000000000;
+    const long unsigned int iterations = 100000000000;
     const unsigned int shuffles = 53;
     srand(time(0));
 
@@ -42,9 +42,27 @@ int main(){
     }
     deck.push_back("ww");
 
+    unsigned int counter = 0;
     valarray<unsigned int> tallies;
     tallies.resize(11, 0);
-    for (int i = 0; i < iterations; i++){
+    for (long int i = 0; i < iterations; i++){
+        if (i % 100000000 == 0){
+            counter++;
+            printf("Print #%d.\n", counter);
+            printf("standard poker hierarchy:\n");
+            printf("iterations: %ld\n", i);
+            printf("five-of-a-kinds: %d\n", tallies[0]);
+            printf("royal flushes: %d\n", tallies[1]);
+            printf("straight flushes: %d\n", tallies[2]);
+            printf("four-of-a-kinds: %d\n", tallies[3]);
+            printf("full houses: %d\n", tallies[4]);
+            printf("flushes: %d\n", tallies[5]);
+            printf("straight: %d\n", tallies[6]);
+            printf("two pairs: %d\n", tallies[7]);
+            printf("three-of-a-kinds: %d\n", tallies[8]);
+            printf("junk: %d\n", tallies[10]);
+            printf("one pairs: %d\n", tallies[9]);
+        }
         string hand = "";
         for (int ii = 0; ii < shuffles; ii++) swap(deck[rand()%deck.size()], deck[rand()%deck.size()]); // this loop randomly shuffles the deck
         for (int ii = 0; ii < 5; ii++) hand += deck[ii]; // this loop draws five cards from the deck to the hand
@@ -64,19 +82,6 @@ int main(){
         if (!bs.count()) bs[10] = 1;
         for (int ii = 0; ii < 11; ii++) if(bs[ii]) tallies[ii]++;
     }
-    printf("no hierarchy:\n");
-    printf("iterations: %ld\n", iterations);
-    printf("five-of-a-kinds: %d\n", tallies[0]);
-    printf("royal flushes: %d\n", tallies[1]);
-    printf("straight flushes: %d\n", tallies[2]);
-    printf("four-of-a-kinds: %d\n", tallies[3]);
-    printf("full houses: %d\n", tallies[4]);
-    printf("flushes: %d\n", tallies[5]);
-    printf("straight: %d\n", tallies[6]);
-    printf("three-of-a-kinds: %d\n", tallies[7]);
-    printf("two pairs: %d\n", tallies[8]);
-    printf("one pairs: %d\n", tallies[9]);
-    printf("junk: %d\n", tallies[10]);
 }
 //--
 bool onePair(string &hand){
