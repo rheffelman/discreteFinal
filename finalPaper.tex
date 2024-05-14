@@ -1,0 +1,214 @@
+\documentclass[16pt]{article}
+\usepackage[margin=1in]{geometry} 
+\usepackage{amsmath, amsthm, amssymb, mathrsfs, graphicx, mathtools, tikz, hyperref, enumitem, setspace, MnSymbol,wasysym}
+\setstretch{1.2}
+\usetikzlibrary{positioning}
+\newcommand{\n}{\mathbb{N}}
+\newcommand{\z}{\mathbb{Z}}
+\newcommand{\q}{\mathbb{Q}}
+\newcommand{\cx}{\mathbb{C}}
+\newcommand{\real}{\mathbb{R}}
+\newcommand{\field}{\mathbb{F}}
+\newcommand{\ita}[1]{\textit{#1}}
+\newcommand{\com}[2]{#1\backslash#2}
+\newcommand{\oneton}{\{1,2,3,...,n\}}
+\newcommand\idea[1]{\begin{gather*}#1\end{gather*}}
+\newcommand\ef{\ita{f} }
+\newcommand\eff{\ita{f}}
+\newcommand\proofs[1]{\begin{proof}#1\end{proof}}
+\newcommand\inv[1]{#1^{-1}}
+\newcommand\setb[1]{\{#1\}}
+\newcommand\en{\ita{n }}
+\newcommand{\vbrack}[1]{\langle #1\rangle}
+\newenvironment{theorem}[2][Theorem]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+\newenvironment{lemma}[2][Lemma]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+\newenvironment{exercise}[2][Exercise]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+\newenvironment{reflection}[2][Reflection]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+\newenvironment{proposition}[2][Proposition]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+\newenvironment{corollary}[2][Corollary]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+\hypersetup{colorlinks, linkcolor=blue}
+\setlength{\parindent}{20pt}
+\begin{document}
+\large
+\date{}
+\title{\Large Discrete Structures Final Project \\ Ryan Heffelman \\ Donovan Frazier \\ Mitchell Clark \\ May 9^\(th\), 2024}
+\maketitle
+\section{Introduction to the Poker Wild Card Paradox} 
+
+In his paper “Poker With Wild Cards- A Paradox?” Steve Gadbois explains how the rules of poker break when the two jokers included in the deck are used as wild cards. In poker, there are ten recognized hands of cards arranged in a hierarchy in order of value, from a royal flush (a hand consisting of a 10, jack, queen, king, and ace) to a junk hand (a hand that isn’t any other hand). The values given to hands are based on their frequency, where rarer hands are given more value than less rare hands. 
+
+The inclusion of wild cards creates a new eleventh hand: FIVE-OF-A-KIND, which can be achieved by drawing four cards of the same denomination as well as a wild card. When Gadbois calculated the frequency of each hand with two wild cards added to the deck, he found that the hierarchy of hands no longer corresponded to their frequency. THREE-OF-A-KIND, for example, became more frequent than TWO PAIR, even though it has a higher value. Gadbois attempted to revise the hierarchy to accurately represent the new frequencies of hands, but rearranging the hierarchy only further changed their frequencies. Overall, Gadbois found that with two added wild cards, there is no hierarchy consistent with the frequency of hands. Gadbois found the probabilities and frequencies of his hierarchies using precise somewhat complicated variations of the formulas used to derive the classic no-wildcard 5-card poker statistics, adjusted to account for the addition of two wildcards.
+
+\section{Project Objectives and Framework of Inquiry}
+%In this project we aim to answer a few questions that came up while reading Gadbois paper.
+\subsection{What Happens When You Use One Wildcard?}
+It seems quite arbitrary that Gadbois chose to add two wildcards to the deck. We'd like to ask, happens when you add one? It seems like the natural next step is to add one wildcard instead of jumping to two. Does anything interesting happen when you add one instead of two? Did he already do those calculations, conclude that nothing interesting happens, and move on to the two wildcard case? Did he find some super interesting secret results that he's hiding from the the mathematics community? Is two wildcards the lowest amount of wildcards you can add to a deck to induce a paradox?
+
+\subsection{Is There a Most Consistent Hierarchy}
+If there is no consistent hierarchy of poker hands, is there such thing as the \textit{most} consistent hierarchy? Can one hierarchy be quantifiably more consistent than another? If so, that offers a potential compromise, to make the best out of a bad situation.
+
+\subsection{Independent Frequency Hypothesis}
+Finally, we wondered what happens when you treat all poker hands as independent. For example, what if a ROYAL FLUSH is not only counted as a ROYAL FLUSH, but a ROYAL FLUSH, a STRAIGHT FLUSH, a STRAIGHT, and a FLUSH? Instead of jumping from hierarchy to hierarchy trying to find consistency, what if you started from a place of no hierarchy? What does the independent frequency of the poker hands look like when playing poker with one wildcard? Would this be the ``true'' frequency of the hands of cards? Would a hierarchy based on this frequency-ordering be consistent, or the most consistent?
+
+\section{Methods}
+\subsection{}
+We chose to use computational methods as opposed to mathematical ones in order to answer our questions. We wrote a program in C++ that creates a deck of cards, randomly shuffles the deck, deals out a hand, and then checks to see what kind of hand it is based on a given hierarchy. We encoded decks of cards as strings where ``ac7s9hqdww'' represents the poker hand: ``ace of clubs, 8 of spades, 10 of hearts, queen of diamonds, and a wild card''. These strings representing hands of cards are then sent through various functions to detect whether they meet the conditions for certain poker hands, and tallied if they do. Poker hand hierarchies are encoded using if else-logic: if it’s a ROYAL FLUSH then it’s a ROYAL FLUSH, else if it’s a STRAIGHT FLUSH, etc. We handle the random shuffling of the deck by simply swapping a random index with another random index 53 times for each iteration of the simulation (1 billion * 53 total on a 1 billion iteration simulation). 53 might seem like a magic number, it is the amount of cards in the deck with an added wildcard. It was chosen after some statistical analysis that suggested there was no difference in the results you get when randomly swapping 1,000 times per iteration vs 100 times per iteration vs 53 times per iteration (the correlation between the three was 1, whereas with 10 and 15 shuffles per iteration there was an effect on the results). A smaller amount of swaps per iteration means we can do a higher number of iterations in a reasonable amount of time, increasing the accuracy of our other results. The code used to obtain the data used in this paper can be found at: \\github.com/rheffelman/discreteFinal
+
+\subsection{}
+To quantify the consistency of a given hierarchy we made another C++ program, although our method is simple enough that it can be done by hand. Where a hierarchy is a sequence of poker hands $h_1, h_2, h_3 … h_n$, we check if the probability of $h_i$ is greater than that of $h$_\(i+1\), if so we add the difference to a variable. By the time you’ve done this for all $h$ in the sequence, you have a statistic somewhat representative of the “consistency” of a hierarchy of poker hands. Because we're unsure of what this statistic is actually called, throughout this paper it will be referred to as the ``Hierarchy Consistency Index'', or HCI. The idea behind HCI is that a ``consistent'' hierarchy is one where rank 1 in the hierarchy is the lowest probability, rank 2 is the second lowest probability, and so on. The probability must trend strictly upwards, and if it doesn't then we take the difference in probability and not frequency because the frequency of hands near the tail-end of the hierarchy are orders of magnitude larger than those near the beginning, thus they would have a much greater impact in the statistic. The code used to compute the HCI throughout this project can be found here: \\github.com/rheffelman/discreteFinal/blob/main/HCI.cpp
+
+
+\section{Results}
+\subsection{Standard Hierarchy With One Wildcard}
+First we ran our 5-card one wildcard simulator using the standard hierarchy, appending FIVE-OF-A-KIND to the beginning of the hierarchy just as Gadbois had done. Below is a table containing the results of the simulation. There are some important things to note about the data this simulation produced; with one wildcard in the deck, the standard poker hierarchy is not consistent with the frequencies of the hands. THREE-OF-A-KIND is above TWO PAIR in the hierarchy, however it appears more frequently. This is the only inconsistency present in the table. Contrasting this with Gadbois results with 2 wildcards, he found two inconsistencies in his table, ONE PAIR/JUNK, and THREE-OF-A-KIND/TWO PAIR. While with one wildcard the standard hierarchy \textit{is} inconsistent, with two wildcards the standard hierarchy is \textit{more} inconsistent. This is not only true in the amount of inconsistencies, but in the magnitude. When computing the HCI with Gadbois data we get that it's 0.078081, which is greater than that of our data with 1 wildcard, meaning it's \textit{more} inconsistent than it is with one wildcard. We predict this is because with a wildcard in the hand you automatically get a ONE PAIR, and with less wildcards in the deck there is less probability of getting an instant ONE PAIR.
+
+\begin{center}
+\begin{tabular}{ |c c c c|} 
+\hline
+\multicolumn{4}{|c|}{\textbf{Standard Hierarchy With One Wildcard}} \\
+\multicolumn{4}{|c|}{Iterations: One Billion} \\
+ \hline
+ Rank & Hand Type & Computed Frequency & Computed Probability \\ 
+ \hline
+ 1 & FIVE-OF-A-KIND & 4,529 & 0.000004529\\ 
+ 2 & ROYAL FLUSH & 8,347 & 0.000008347\\ 
+ 3 & STRAIGHT FLUSH & 56,965 & 0.000056965\\
+ 4 & FOUR-OF-A-KIND & 1,086,659 & 0.001086659\\
+ 5 & FULL HOUSE & 2,284,332 & 0.002284332\\
+ 6 & FLUSH & 2,723,625 & 0.002723625\\
+ 7 & STRAIGHT & 6,538,740 & 0.00653874\\
+ 8 & THREE-OF-A-KIND & 47,844,165 & 0.047844165\\
+ 9 & TWO PAIR & 43,049,401 & 0.043049401\\
+ 10 & ONE PAIR & 442,177,652 & 0.442177652\\
+ 11 & JUNK & 454,225,585 & 0.454225585\\
+ \hline
+ \multicolumn{4}{|c|}{HCI: 0.00479476} \\
+ \hline
+\end{tabular}
+\end{center}
+
+\subsection{Gadbois Alternative Hierarchy With One Wildcard}
+Next we ran our simulation on the second hierarchy in Gadbois' paper. We essentially got Gadbois' results but watered down. ONE PAIR and JUNK were already consistent in the standard hierarchy with 1 wildcard, so one could easily predict that swapping them around would result in inconsistency, and that's exactly what we saw. Interestingly however, swapping around TWO PAIR and THREE-OF-A-KIND resulted in a much greater inconsistency than there was in the standard hierarchy (Note that swapping JUNK and ONE PAIR could not have had an effect on this because they come later in the hierarchy), however still a smaller inconsistency than in Gadbois' second table. The HCI for his table with two wildcards comes out to 0.251338, whereas ours with one wildcard was 0.183626, meaning with one wildcard this hierarchy is \textit{more} consistent than with two, however as a whole this alternative hierarchy is a great deal less consistent than the standard poker hierarchy. 
+
+\begin{center}
+\begin{tabular}{ |c c c c|} 
+\hline
+\multicolumn{4}{|c|}{\textbf{Gadbois Alternative Hierarchy With One Wildcard}} \\
+\multicolumn{4}{|c|}{Iterations: One Billion} \\
+ \hline
+ Rank & Hand Type & Computed Frequency & Computed Probability \\ 
+ \hline
+ 1 & FIVE-OF-A-KIND & 4,606 & 0.000004606\\ 
+ 2 & ROYAL FLUSH & 8,354 & 0.000008354\\ 
+ 3 & STRAIGHT FLUSH & 57,260 & 0.00005726\\
+ 4 & FOUR-OF-A-KIND & 1,088,428 & 0.001088428\\
+ 5 & FULL HOUSE & 2,283,817 & 0.002283817\\
+ 6 & FLUSH & 2,724,699 & 0.002724699\\
+ 7 & STRAIGHT & 6,533,194 & 0.006533194\\
+ 8 & TWO PAIR & 71,763,359 & 0.071763359\\
+ 9 & THREE-OF-A-KIND & 19,133,941 & 0.019133941\\
+ 10 & JUNK & 513,699,582 & 0.513699582\\
+ 11 & ONE PAIR & 382,702,760 & 0.38270276\\
+ \hline
+ \multicolumn{4}{|c|}{HCI: 0.183626} \\
+ \hline
+\end{tabular}
+\end{center}
+
+\subsection{\textbf{Independent Frequency of Poker Hands}}
+Next we took out the if-else hierarchy so we could see the actual frequencies of each type of hand. This means that certain poker hands can overlap and count as multiple things, e.g. a ROYAL FLUSH is counted as a ROYAL FLUSH, a STRAIGHT FLUSH, a STRAIGHT, and a FLUSH. This overlap means that the total number of matches was greater than the amount of iterations, whereas in all previous tables the iterations were exactly the same as the total amount of matches (each iteration matches with either junk or non-junk).
+
+There are some peculiarities with this table compared to the others. First of all, it's hard to define how JUNK should behave with no hierarchy, JUNK is necessarily dependent on all of the other hands. With this simulation, we defined JUNK to be true when no other hands can be made. For example, this means that if you have the hand: [Ace of spades], [8 of hearts], [Wild Card], [10 of clubs], [3 of Diamonds], it would be counted as (ONE PAIR and not JUNK) instead of ONE PAIR and JUNK. Because of this, I'd suggest not taking the JUNK numbers too seriously in this table. Additionally, there are no ranks on the table because it's non-hierarchical, although it is ordered by frequency. There's no HCI included in this table because that statistic isn't particularly useful here.
+
+\begin{center}
+\begin{tabular}{ |c c c|} 
+\hline
+\multicolumn{3}{|c|}{\textbf{Independent Frequency of Poker Hands}} \\
+\multicolumn{3}{|c|}{Iterations: One Billion} \\
+ \hline
+ Hand Type & Computed Frequency & Computed Probability \\ 
+ \hline
+ FIVE-OF-A-KIND & 4,436 & 0.000004436\\ 
+ ROYAL FLUSH & 8,401 & 0.000008401\\ 
+ STRAIGHT FLUSH & 65,988 & 0.000065988\\
+ FOUR-OF-A-KIND & 1,093,295 & 0.001093295\\
+ FLUSH & 2,789,670 & 0.002789670\\
+ FULL HOUSE & 3,156,132 & 0.003156132\\
+ STRAIGHT & 6,602,532 & 0.006602532\\
+ THREE-OF-A-KIND & 50,996,123 & 0.050996123\\
+ TWO PAIR & 75,134,997 & 0.075134997\\
+ JUNK & 454,266,599 & 0.454266599\\
+ ONE PAIR & 540,739,594 & 0.540739594\\
+ \hline
+ \multicolumn{3}{|c|}{Total Matches: 1,134,857,767} \\
+ \hline
+\end{tabular}
+\end{center}
+
+\subsection{\textbf{Independent Frequency Hypothesis Test}}
+Next we ran a simulation to test the hypothesis mentioned in Section 2.3: Is the natural ordered frequency of the poker hands when treated independently the most consistent hierarchy possible? For this we used a hierarchy based on the ordering of frequencies from the previous table in Section 4.3. The only difference between this hierarchy and the standard poker hierarchy from Section 4.1 is that FULL HOUSE and FLUSH are swapped. This hierarchy ended up being quite consistent with the HCI being 0.00523854. FLUSH and FULL HOUSE are backwards in comparison to the order of the frequencies but they are quite close, and THREE-OF-A-KIND and TWO PAIR are backwards by roughly the same amount as in the standard hierarchy.
+
+\begin{center}
+\begin{tabular}{ |c c c c|} 
+\hline
+\multicolumn{4}{|c|}{\textbf{Independent Frequency Hypothesis Test}} \\
+\multicolumn{4}{|c|}{Iterations: One Billion} \\
+ \hline
+ Rank & Hand Type & Computed Frequency & Computed Probability \\ 
+ \hline
+ 1 & FIVE-OF-A-KIND & 4,532 & 0.000004532\\ 
+ 2 & ROYAL FLUSH & 8,430 & 0.00000843\\ 
+ 3 & STRAIGHT FLUSH & 57,387 & 0.000057387\\
+ 4 & FOUR-OF-A-KIND & 1,087,093 & 0.001087093\\
+ 5 & FLUSH & 2,726,406 & 0.002726406\\
+ 6 & FULL HOUSE & 2,282,098 & 0.002282098\\
+ 7 & STRAIGHT & 6,537,292 & 0.006537292\\
+ 8 & THREE-OF-A-KIND & 47,851,567 & 0.047851567\\
+ 9 & TWO PAIR & 43,057,334 & 0.043057334\\
+ 10 & ONE PAIR & 442,157,286 & 0.442157286\\
+ 11 & JUNK & 454,230,575 & 0.454230575\\
+ \hline
+ \multicolumn{4}{|c|}{HCI: 0.00523854} \\
+ \hline
+\end{tabular}
+\end{center}
+
+\section{Conclusions}
+\subsection{The Paradox Persists}
+We found that with one wildcard in the deck there is still no hierarchy of poker hands that is consistent with the frequency of hands under said hierarchy, there is still a paradox, although it's a slightly different one. Gadbois found that with two wildcards the hierarchy of poker hands is \textit{doubly} paradoxical, while our hierarchy with one wildcard was \textit{singly} paradoxical. With two wildcards, JUNK/ONE PAIR and THREE-OF-A-KIND/TWO PAIR flipped back and forth forever depending on how you order them in the hierarchy, whereas with one wildcard in the deck there is only the paradox of THREE-OF-A-KIND/TWO PAIR flipping back and forth.
+
+Additionally, there is some evidence to sugg
+
+\subsection{The Most Consistent Hierarchy}
+Using HCI we were able to establish a hierarchy of hierarchies, or a hierarchy$^2$. It's important to note that all one-wildcard hierarchy data in the following table is an approximation-- a pretty accurate one-- and not an exact result due to the nature of a random iterative simulation, whereas all two-wildcard hierarchy data is calculated exactly, based on the probabilities provided in Gadbois' paper. We've found that in the few hierarchies we've tested, the Standard Poker Hierarchy with FIVE-OF-A-KIND appended to the start is the most consistent hierarchy according to HCI. That being said, there are 39,916,800  different poker hand hierarchies possible (11! or 10! depending on how you treat JUNK), we've simply tested 4 that one might reasonably suspect are among the most consistent. It takes approximately an hour to run a one billion iteration simulation for a given hierarchy, and we don't have a great way to cycle through different hierarchies. This means, because we haven't tried all hierarchy permutations or all the ones that are likely to be highly consistent we can't conclude that the Standard Poker Hierarchy is the most consistent hierarchy, just the most consistent out of the ones we've tested. This is a limitation of our simulation, however a mathematical approach would be limited significantly more by this
+
+\begin{center}
+\begin{tabular}{ |c c c|} 
+\hline
+\multicolumn{3}{|c|}{\textbf{The Hierarchy$^2$}} \\
+ \hline
+ Rank & Name of Hierarchy & HCI\\ 
+ \hline
+ 1 & 1WC Standard Poker Hierarchy & 0.004794 \\ 
+ 2 & 1WC Independent Frequency Hypothesis  & 0.005238\\
+ 3 & 2WC Standard Poker Hierarchy  & 0.078081\\
+ 4 & 1WC Gadbois Alternative Hierarchy  & 0.183626\\
+ 5 & 2WC Gadbois Alternative Hierarchy  & 0.251338\\
+ \hline
+ \multicolumn{3}{|c|}{1WC = One Wildcard || 2WC = Two Wildcards} \\
+ \hline
+\end{tabular}
+\end{center}
+
+\subsection{Independent Frequency Hypothesis}
+Unfortunately our findings disprove our own hypothesis, but oh well, that's science. As you can see in The Hierarchy$^2$ table and section 4.4, the hierarchy created based on the independent frequencies of poker hands with one wildcard does not predict the most consistent hierarchy. It predicted a relatively consistent hierarchy, but one that we have sufficient evidence to conclude is \textit{not} the \textit{most} consistent hierarchy. While the HCI values seem quite close to each other, those values are so precise that it's \textit{extremely} unlikely (3.2 z score) that they would vary enough to allow the 1WC Independent Frequency Hypothesis Hierarchy to overtake the 1WC Standard Poker Hierarchy as the most consistent hierarchy.
+
+\subsection{Overall}
+Overall we found that wildcard poker is an incredibly interesting mathematical system. 1-wildcard 5-hand poker statistics are not boring, they have their own peculiarities which help a lot towards understanding the mathematics of wildcard poker, as well as broader more abstract combinatorial systems. We asked different but similar questions to Gadbois and aimed to answer them in different ways.
+\end{document}
