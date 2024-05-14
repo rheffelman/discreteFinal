@@ -1,4 +1,4 @@
-Ryan Heffelman
+Ryan Heffelman<br />
 MTH 1240 - Discrete Structures
 5/14/2024
 Sara Jensen
